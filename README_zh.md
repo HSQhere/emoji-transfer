@@ -1,8 +1,6 @@
-# HelloMeme Emoji Transfer (Windows 一键集成版)
+# Emoji Transfer
 
-本仓库提供了一个高度集成的表情迁移（人脸驱动）环境。通过一张静态照片（参考图）和一段视频（驱动视频），利用 Stable Diffusion 和深度学习技术，将视频中的表情细节实时同步到静态照片的人物脸上。
-
-
+本仓库提供了一个高度集成的表情迁移（人脸驱动）环境。通过一张静态照片（参考图）和一段原始驱动视频/图像，利用 Stable Diffusion 和深度学习技术，将视频中的表情细节实时同步到静态照片的人物脸上。
 
 ---
 
@@ -19,7 +17,7 @@
 ## 🚀 快速开始
 
 ### 1. 运行环境检查
-双击运行目录下的 **`1.py`**（图形启动器）。
+运行目录下的 **`launch.py`**（图形启动器）。
 * **Built-in environment**: 状态应显示为 `✅ ready`。
 * **GPU Status**: 若显示显卡型号，则表示显存加速已开启。
 
@@ -33,16 +31,12 @@
 
 ---
 
-## 🛠️ 显存优化 (Low VRAM 模式)
+## 🛠️ 显存优化
 
-如果您的显卡显存 **≤ 8GB**，请务必执行以下操作：
-
-1.  **代码优化**: 本版本已在 `app.py` 内部集成了 `enable_model_cpu_offload()` 逻辑，显著降低显存占用。
-2.  **输入控制**: 
-    - 建议上传图片分辨率不超过 `512x512`。
-    - 驱动视频长度建议控制在 10 秒以内。
-3.  **系统设置**: 
-    - 请确保 Windows **虚拟内存** 已手动设置为 **32GB** 或更大，以防止加载扩散模型时因内存溢出导致程序闪退。
+显卡显存建议 **>= 8GB**：
+1. **输入控制**: 建议上传图片分辨率不超过 `512x512`。
+2. **系统设置**: 请确保 Windows **虚拟内存** 已手动设置为 **32GB** 或更大，以防止加载扩散模型时因内存溢出导致程序闪退。
+3. **进阶调优**: 可根据显存大小修改 `app.py` 里面的 `pipeline_dict_len` 值，该值表示预加载的模型数量。
 
 ---
 
@@ -51,36 +45,48 @@
 ### 1. 程序闪退 (错误码: 0xC0000005)
 * **现象**: 控制台报错 `Access Violation` 后退出。
 * **原因**: 通常是虚拟内存不足或底层 DLL (OpenCV/Torch) 冲突。
-* **解决**: 
-    * 关闭所有高内存占用程序（如浏览器、壁纸引擎）。
-    * 运行 `.\env\python.exe -m pip install "numpy<2.0.0"` 解决 NumPy 2.x 版本冲突。
+* **解决**: 关闭所有高内存占用程序（如浏览器、壁纸引擎），并确保虚拟内存充足。
 
-### 2. Gradio 界面报错 (AttributeError: Blocks)
-* **原因**: Gradio 库损坏或前端模板 (`index.html`) 丢失。
-* **解决**: 运行以下命令强制修复：
-    ```cmd
-    .\env\python.exe -m pip install --force-reinstall gradio
-    ```
-
-### 3. 模型下载失败 (HuggingFace Login 错误)
-* **原因**: 默认官方下载源不可用。
-* **解决**: 确保已安装 `modelscope`。执行：
-    ```cmd
-    .\env\python.exe -m pip install modelscope
-    ```
+### 2. 界面显示 `Error: @@ huggingface-cli login`？
+* **原因分析**: 本地模型文件不完整。程序尝试联网下载时中断，或由于网络环境、虚拟内存不足导致认证报错。
+* **解决方法**:
+    * **激活魔搭 (Modelscope) 镜像**: 在项目目录下运行：
+      ```bash
+      .\env\python.exe -m pip install modelscope
+      ```
+    * **手动补全**: 检查 `model_cache/huggingface` 文件夹，确保大容量 `.safetensors` 或 `.bin` 文件已完整存在。
 
 ---
 
 ## 📂 核心目录结构
 
-- `env/`: 独立的 Python 运行环境。
-- `models/`: 存放 RealisticVision、VAE、ControlNet 等核心权重。
+- `env/`: 独立的 Python 运行环境（必须放在根目录）。
+- `model_cache/huggingface`: 存放 RealisticVision、VAE、ControlNet 等核心权重。
 - `app.py`: Gradio 主程序。
-- `1.py`: 带有日志监控功能的 GUI 启动器。
+- `launch.py`: 带有日志监控功能的 GUI 启动器。
 - `Download and loading.py`: 资源预检与模型加载脚本。
 
 ---
 
-## ⚠️ 使用须知
-1. 请勿随意运行非官方提供的“清理脚本”，特别是删除 `.html` 或 `.json` 文件的脚本，这会导致前端崩溃。
-2. 本项目仅供学习研究使用，严禁用于任何形式的深度伪造（Deepfake）非法用途。
+## 📢 发布与特别说明
+
+### **1. 极简发布版说明**
+* **本仓库不含 `env` 和模型文件**：为了减小体积，你需要通过启动器进行初始化。
+* **必须联网**：首次初始化时需要联网下载约 12GB 的必要组件，请保持网络畅通。
+
+### **2. 免责声明 (Disclaimer)**
+* **合法用途**: 本项目仅供学术交流，严禁利用本项目制作、传播违背他人意愿的深度伪造（Deepfake）视频。
+* **版权责任**: 用户生成的内容由其自行承担法律责任。
+
+---
+
+## 💖 鸣谢 (Acknowledgements)
+
+本项目核心算法基于 **HelloMeme** 开源项目构建，并由多位开发者共同完善。
+
+* **核心算法**: 衷心感谢 **HelloMeme** 原作者及其团队。
+  - [GitHub - HelloMeme](https://github.com/juechen-info/HelloMeme)
+* **合作伙伴**: 感谢所有在开发、测试及优化过程中提供帮助的合作者。
+* **特别致谢**: 感谢HSQ的朋友 **Lin Xiaoru** 在项目开发过程中的支持与陪伴。
+
+正是有了这些优秀的开源工作和朋友的支持，本项目才得以顺利完成。
