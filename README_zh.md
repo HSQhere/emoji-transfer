@@ -20,6 +20,7 @@
 运行目录下的 **`launch.py`**（图形启动器）。
 * **Built-in environment**: 状态应显示为 `✅ ready`。
 * **GPU Status**: 若显示显卡型号，则表示显存加速已开启。
+* **Network status**: 确保全程联网！！！。
 
 ### 2. 初始化模型 (首次运行)
 点击界面上的 **"Initialize Environment"**。
