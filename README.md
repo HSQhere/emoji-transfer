@@ -20,6 +20,7 @@ This repository provides a highly integrated environment for expression migratio
 Run **`launch.py`** (the graphical launcher) located in the root directory.
 * **Built-in environment**: Status should display `✅ ready`.
 * **GPU Status**: If the graphics card model is displayed, GPU acceleration is enabled.
+* * **Network status**: make sure you connect WI-IF！！！。
 
 ### 2. Model Initialization (First Run Only)
 Click the **"Initialize Environment"** button on the interface.
